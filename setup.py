@@ -6,6 +6,7 @@ setup(
     description="A mail server framework",
     install_requires=[
         "dnspython3>=1.12.0",
+        "aiosmtpd",
     ],
     license="GPLv3 or later",
     classifiers=[
