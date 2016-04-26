@@ -14,6 +14,12 @@ class SMTPError(Exception):
 class BaseServer:
     """Overrides some of aiosmtpd's SMTP class, but don't inherit from it yet
     so we can mix it up with the LMTP class too"""
+
+    @asyncio.coroutine
+    def smtp_HELP(self, arg):
+        # disable HELP
+        yield from self.push("500 Error: There's no help for you here")
+
     @asyncio.coroutine
     def smtp_RCPT(self, arg):
         # override aiosmptd's RCPT method so we can call our event_handler
@@ -57,13 +63,6 @@ class AuthMixin:
     def smtp_EHLO(self):
         super().smtp_EHLO()
         self.push("250 AUTH")
-
-    @asyncio.coroutine
-    def smtp_HELP(self, arg):
-        if arg and arg.upper() == "AUTH":
-            yield from self.push("250 Syntax: AUTH")
-        else:
-            super().smtp_HELP(arg)
 
 
 class SMTP(BaseServer, aiosmtpd.SMTP):
