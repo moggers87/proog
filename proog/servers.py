@@ -114,6 +114,27 @@ class AuthMixin:
         pass
 
 
+class StartTlsMixin:
+    # XXX stub
+
+    _tls_features = None
+
+    def __init__(self, *args, **kwargs):
+        if self._tls_features is None:
+            self._tls_features = []
+
+        super().__init__(*args, **kwargs)
+
+        self._ehlo_features.append("STARTTLS")
+        self.tls_started = False
+
+    @asyncio.coroutine
+    def smtp_STARTTLS(self, arg):
+        self.push("220 Ready to start TLS")
+
+        # XXX TLS magic goes here
+
+
 class SMTP(BaseServer, aiosmtpd.SMTP):
     pass
 
