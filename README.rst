@@ -23,7 +23,8 @@ create mail applications with a common base.
 Status
 ------
 
-I'm still thinking things through.
+I'm still thinking things through, so a lot of things are either broken or just
+not implemented yet. File an issue if you have any questions!
 
 Wait, what about Salmon?
 ------------------------
