@@ -117,14 +117,15 @@ class BaseServer:
 
 class AuthMixin:
     # XXX stub
-    # XXX how should this work with STARTTLS? e.g. auth only available tls?
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._ehlo_features.append("AUTH PLAIN LOGIN")
+        self.authenticated = None
 
     @asyncio.coroutine
     def smtp_AUTH(self, arg):
+        # XXX authenticate!
         pass
 
 
