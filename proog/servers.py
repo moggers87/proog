@@ -84,20 +84,34 @@ class BaseServer:
 
         arg = self._strip_command_keyword("TO:", arg)
         address, params = self._getaddr(self)
+        params = self._getparams(params.upper().split())
         if not address:
             yield from self.push(syntax_error)
             return
         if not self.extended_smtp and params:
             yield from self.push(syntax_error)
             return
+        if params is None:
+            yield from self.push(syntax_error)
+            return
+
+        args = (self.peer, self.mailfrom, address)
+
+        kwargs = {}
+        if not self._decode_data:
+            kwargs = {
+                "mail_options": self.mail_options,
+                "rcpt_options": params,
+            }
 
         status = "250 OK"
         try:
-            status = self.event_handler.check_rcpt(address, params)
+            status = self.event_handler.check_rcpt(*args, **kwargs)
         except SMTPError as error:
             status = error.message
         else:
             self.rcpttos.append(address)
+            self.rcpt_options = params
         self.push(status)
 
 
