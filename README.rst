@@ -1,7 +1,7 @@
 Proog - A Mail Server Framework
 ===============================
 
-Proog is a framework for writing mail services.
+Proog is a toolkit for writing mail services.
 
 Why?
 ----
@@ -17,8 +17,8 @@ On the other hand, neither of thme really offer any sane way for me to
 implement something like Inboxen. I like Salmon, but I still had to put Postfix
 in front of it for various reasons.
 
-This is where Proog comes in: a framework written in Python that will allow me
-to create mail applications with a common base.
+This is where Proog comes in: a toolkit written in Python that will allow me to
+create mail applications with a common base.
 
 Status
 ------
