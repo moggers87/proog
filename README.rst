@@ -13,7 +13,7 @@ aspect of the server. Exim is a similar story, except its configuration is
 Turing complete. So I wanted to make mail server that was opinionated about how
 it would work. My way or the highway.
 
-On the other hand, neither of thme really offer any sane way for me to
+On the other hand, neither of them really offer any sane way for me to
 implement something like Inboxen. I like Salmon, but I still had to put Postfix
 in front of it for various reasons.
 
@@ -30,13 +30,13 @@ Wait, what about Salmon?
 ------------------------
 
 Salmon has a very limited scope, as well as a requirement to be *mostly*
-backwards compatible with Lamon. It's been designed to sit behind another mail
+backwards compatible with Lamson. It's been designed to sit behind another mail
 server (like Postfix), which deals with all the tricky business of attempting
-redilvery and filtering out bad clients.
+redelivery and filtering out bad clients.
 
 Things I'd like to be able to with Proog that would be impossible with Salmon:
 
 * Respond negatively to a client based on their ``MAIL FROM`` or ``RCPT TO``
   before they've had a chance to send ``DATA``
-* Be publically facing, with TLS support and authentication
-* Implement all the nessessary features to be a relay
+* Be publicly facing, with TLS support and authentication
+* Implement all the necessary features to be a relay
