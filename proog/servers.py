@@ -52,7 +52,7 @@ class BaseServer:
             # list features
             yield from self.push("250-%s" % self.fqdn)
             for feature in self._ehlo_features[:-1]:
-                yield from self.push("250-%s" % self.fqdn)
+                yield from self.push("250-%s" % feature)
 
             # only the last line has a space between code and arg
             yield from self.push("250 %s" % self._ehlo_features[-1])
@@ -134,6 +134,7 @@ class StartTlsMixin:
     _tls_features = None
 
     def __init__(self, *args, **kwargs):
+        # XXX my own mail server relpies with "250 DSN". Unsure about the significance of this
         if self._tls_features is None:
             self._tls_features = []
 
@@ -147,6 +148,16 @@ class StartTlsMixin:
         self.push("220 Ready to start TLS")
 
         # XXX TLS magic goes here
+
+        self.tls_started = True
+        if self._tls_features:
+            for feature in self._tls_features[:-1]:
+                yield from self.push("250-%s" % feature)
+
+            # only the last line has a space between code and arg
+            yield from self.push("250 %s" % self._tls_features[-1])
+        else:
+            yield from self.push("250 OK")
 
 
 class SMTP(BaseServer, aiosmtpd.SMTP):
