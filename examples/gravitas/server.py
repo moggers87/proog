@@ -8,11 +8,13 @@ RELAY_QUEUE = None
 LOCAL_QUEUE = None
 
 
-class PublicService(servers.BaseServer, servers.StartTlsMixin):
+class PublicService(servers.SMTP, servers.StartTlsMixin):
+    """Service to be run on port 25, no AUTH."""
     pass
 
 
-class SubmissionService(servers.BaseServer, servers.StartTlsMixin, servers.AuthMixin):
+class SubmissionService(servers.SMTP, servers.StartTlsMixin, servers.AuthMixin):
+    """Service to be run on port 587, requires AUTH and STARTTLS."""
     @asyncio.coroutine
     def smtp_MAIL(self, arg):
         if not self.authenticated:
@@ -29,6 +31,7 @@ class SubmissionService(servers.BaseServer, servers.StartTlsMixin, servers.AuthM
 
 
 class PublicHandler:
+    """For use with ``PublicService``, only relays mail to local rcpttos"""
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
         pass
 
@@ -37,6 +40,9 @@ class PublicHandler:
 
 
 class SubmissionHandler:
+    """For use with ``SubmissionService``, relays anyway as it assumes the
+    connection has been authed
+    """
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
         pass
 

@@ -2,6 +2,7 @@
 Various implementations of a queue
 """
 
+
 class Queue:
     filename = None
 

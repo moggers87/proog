@@ -2,8 +2,8 @@
 Servers for recieving stuff
 """
 
+from aiosmtpd import smtp as aiosmtp, lmtp as aiolmtp
 import asyncio
-import aiosmtpd
 
 
 class SMTPError(Exception):
@@ -12,8 +12,9 @@ class SMTPError(Exception):
 
 
 class BaseServer:
-    """Overrides some of aiosmtpd's SMTP class, but don't inherit from it yet
-    so we can mix it up with the LMTP class too"""
+    """Overrides some of aiosmtpd's SMTP class, but doesn't inherit from it yet
+    so we can mix it up with the LMTP class too
+    """
 
     _ehlo_features = None
 
@@ -24,11 +25,11 @@ class BaseServer:
 
         # XXX command_size_limits should go in EHLO?
         if self.data_size_limit:
-            self._ehlo_features.append("SIZE %s"% self.data_size_limit)
-             self.command_size_limits['MAIL'] += 26
+            self._ehlo_features.append("SIZE %s" % self.data_size_limit)
+            self.command_size_limits['MAIL'] += 26
 
         if not self._decode_data:
-            self._ehlo_features.append("8BITMIME"])
+            self._ehlo_features.append("8BITMIME")
 
         # XXX command_size_limits should go in EHLO?
         if self.enable_SMTPUTF8:
@@ -70,7 +71,7 @@ class BaseServer:
         # override aiosmptd's RCPT method so we can call our event_handler
         # XXX upstream bug as handlers should be able to do this already?
         if not self.seen_greeting:
-            yield from sef.push("503 Error: send HELO/EHLO first")
+            yield from self.push("503 Error: send HELO/EHLO first")
             return
         if not self.mailfrom:
             yield from self.push("503 Error: need MAIL command")
@@ -116,6 +117,13 @@ class BaseServer:
 
 
 class AuthMixin:
+    """Authentication mixin
+
+    You probably want to combine this with ``StartTlsMixin``
+
+    Exposes ``authenticated`` boolean. Defaults to ``False``.  Implements PLAIN
+    and LOGIN only.
+    """
     # XXX stub
 
     def __init__(self, *args, **kwargs):
@@ -130,6 +138,10 @@ class AuthMixin:
 
 
 class StartTlsMixin:
+    """Mixin for STARTTLS support
+
+    Exposes ``tls_started`` boolean. Defaults to ``False``
+    """
     # XXX stub
 
     _tls_features = None
@@ -161,13 +173,9 @@ class StartTlsMixin:
             yield from self.push("250 OK")
 
 
-class SMTP(BaseServer, aiosmtpd.SMTP):
+class SMTP(BaseServer, aiosmtp.SMTP):
     pass
 
 
-class LMTP(BaseServer, aiosmtpd.LMTP):
-    pass
-
-
-class SMTPWithAuth(AuthMixin, SMTP):
+class LMTP(BaseServer, aiolmtp.LMTP):
     pass
