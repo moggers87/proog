@@ -18,14 +18,14 @@ class SubmissionService(servers.SMTP, servers.StartTlsMixin, servers.AuthMixin):
     @asyncio.coroutine
     def smtp_MAIL(self, arg):
         if not self.authenticated:
-            yield from self.push("503 Authenticate first")
+            yield from self.push("530 Must issue a STARTTLS command first")
             return
         yield from super().smtp_MAIL(arg)
 
     @asyncio.coroutine
     def smpt_AUTH(self, arg):
         if not self.tls_started:
-            yield from self.push("503 STARTTLS first")
+            yield from self.push("530 Must issue a STARTTLS command first")
             return
         yield from super().smtp_AUTH(arg)
 

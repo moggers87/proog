@@ -158,7 +158,11 @@ class StartTlsMixin:
 
     @asyncio.coroutine
     def smtp_STARTTLS(self, arg):
-        self.push("220 Ready to start TLS")
+        if arg:
+            yield from self.push("501 Syntax error (no parameters allowed)")
+            return
+
+        yield from self.push("220 Ready to start TLS")
 
         # XXX TLS magic goes here
 
